@@ -406,3 +406,4 @@ sign_out_and_redirect(new_user_session_path)
 
 - https://github.com/plataformatec/devise
 - http://gyuwonable.tistory.com/19?category=939382
+
