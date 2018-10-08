@@ -6,9 +6,8 @@
 
 ## 프로젝트 생성
 
-bash
-
 ```ruby
+# 레일즈 프로젝트를 생성합니다. 
 $ rails new mypost
 ```
 
@@ -19,8 +18,6 @@ $ rails new mypost
 #### 모델 생성하기
 
 모델을 생성해주기 위해 사용하는 명령어이다.
-
-bash
 
 ```ruby
 # rails generate model [modelname] 
@@ -229,7 +226,7 @@ end
 
 `form` 은 다른 _url_로 현재 입력받은 데이터를 넘겨주는 태그이다.
 
- `form` 안에 `input` 태그의 데이터를 넘겨주는데, `name` 속성을 통해 넘겨준다.
+ `form` 안에 `input` 태그의 데이터를 넘겨주는데, `name` 속성을 넣어줘야한다! `name` 의 값을 가지고 
 
 ##### views/posts/edit.html.erb
 
@@ -292,6 +289,10 @@ html form 태그에서는 _get/post_ 만 제공해주기 때문에, 위처럼 �
 
 위에 내용들을 토대로 액션메서드에 기능을 만들어보자
 
+컨트롤러는 _form_ 에서 받아온 값들을 데이터베이스에 저장 하던가, 값을 조작하는 방법을 해준다. 
+
+form 에서 온 값은 `parameter` 로 가져온다. 따라서 이 요약의 `params[:name]` 으로 가져온다. 
+
 ```ruby
 class PostsController < ApplicationController
     # view o
@@ -301,11 +302,14 @@ class PostsController < ApplicationController
     end
 
     def show
+        # form 에서 전달한 input 값중 name 이 id 인 값을 post_id 에 저장한다. 
         post_id = params[:id]
+        # Post 모델에서 id 값이 post_id 인 값의 데이터 객체를 찾아 @post 에 저장한다. 
         @post = Post.find(post_id)
     end
 
     def new
+        # Post 모델을 저장할 수 있는 객체를 생성한다.
         @post = Post.new
     end
 
@@ -320,6 +324,7 @@ class PostsController < ApplicationController
         @post.title = params[:title]
         @post.content = params[:content]
         @post.save 
+        # 저장 후 /posts 의 url 로 전달해줍니다. 이 이하의 코드값은 실행되지 않습니다.
         redirect_to "/posts"
     end
 
