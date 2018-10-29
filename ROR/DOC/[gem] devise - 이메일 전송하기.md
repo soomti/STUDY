@@ -2,11 +2,11 @@
 
 레일즈를 이용해서 로그인을 만들때 가장 유용한 gem `devise ` 에 대한 심화! 
 
-이메일 보내는걸 만들어보자! 
+패스워드 찾기 - 이메일을 연결해보자 
 
 
 
-## mailgun을 이용한 비밀번호 찾기 
+## password 찾기 
 
 디바이스에서 제공해주는 비밀번호 찾기는 이메일로 토큰을 보낸 후, 그 이메일에서 `url` 을 전달하는 방식을 사용한다.
 
@@ -16,7 +16,9 @@
 <% end -%>
 ```
 
-이런 메서드를 제공해 주는데, new_password_path 를 가보면
+이런 메서드를 제공해 주는데, _new_password_path_ 파일을 가보면
+
+##### password/new.html.erb
 
 ```erb
 <h2>Forgot your password?</h2>
@@ -37,17 +39,15 @@
 <%= render "devise/shared/links" %>
 ```
 
-이렇게 이메일, 전송하는 페이지를 제공해준다. 그냥 누르면  
+이 나오고, 클릭시**_host 가 정확하지 않다_ ** 와 같은 에러 페이지가 뜬다.
 
-host  가 정확하지 않다는 메세지가 나온! 프로젝트 자체에 이 연결을 해주는건 직접 해야한다! 
+디바이스에서 많이 제공해주지만, 이메일 연동을 직접 해주어야 한다. 
 
-가장 쉽게 이메일 전송하는 방법은 `mailgun` 을 사용하는 방식이다.
+가장 쉽게 이메일 전송하는 방법은 `mailgun` 을 사용하는 방식이기 때문에 mailgun 을 사용해보자.
 
 
 
-## mailgun 을 사용한 이메일 보내기
-
-##### gem file 설치
+## mailgun 설정 
 
 ```ruby
 gem 'mailgun_rails'
@@ -55,19 +55,19 @@ gem 'mailgun_rails'
 
 https://app.mailgun.com/
 
-에 가입 후 새로운 도메인을 만들어준다. 만약 테스트 계정일경우에는, sandbox 를 기본적으로 하나 제공해주는데 그걸로 테스트를 해도 무방하다. 하지만 테스트 계정일 경우 _Authorized Recipients_ 를 추가한 값만 메일이 보내지니 주의하자! 
+에 가입 후 새로운 도메인을 만들어준다. 
 
-##### host 설정
+테스트의 경우, mailgun 에서 sandbox 를 기본적으로 하나 제공해주는데 그걸로 테스트를 해도 무방하다
 
-이메일을 보내기 위해 development.rb 에 host 설정을 해주어야 한다. 
+이걸 사용할때,  __Authorized Recipients__ 를 추가한 값만 메일이 보내지니 주의하자! 
 
-mailgun 에서 키를 받으면 해당 `api key`와 `domain` 을 제공하는데 그 값을 넣어주면 된다. 
 
-`Rails.application.credentials.mailgun_api_key` 는 rails 5.2 이상에서 제공해주는 걸 쓴거고,
 
-`figaro gem`  또는, rails 4 에서 제공하는 `secret.yml` 을 사용해도된다!
+## host 설정
 
-development 모드기 때문에 `http://localhost:3000` 을 사용해 줬지만, 프로덕션에서는 실제 url 을 사용해야 함을 생각하자
+이메일을 보내기 위해 host 설정을 해주어야 한다!
+
+##### development.rb
 
 ```ruby
 config.action_mailer.default_url_options = { :host => "http://localhost:3000/" }
@@ -78,6 +78,18 @@ config.action_mailer.mailgun_settings = {
 }
 ```
 
+개발 환경이여서 :host 를 _localhost_ 로 만들어줬다.
+
+mailgun 에서 만든 domain key 안에 api_key, domain 을 넣어주면 된다. 
+
+위에는 레일즈 5.2 에서 제공해주는 credentials.yml 을 사용한 내용이고
+
+_figaro gem_ 또는 _secret.yml_ 을 사용해준다. 
+
+`production` 모드 사용시 프로덕션에 대한 내용에도 추가해준다! 
+
+
+
 ##### devise.rb
 
 어떤 메일로 보낼지 설정을 해준다.
@@ -86,3 +98,4 @@ config.action_mailer.mailgun_settings = {
   config.mailer_sender = 'openull.ssomee@gmail.com'
 ```
 
+이렇게만 설정해주면 메일 알아서 감! 끝!
